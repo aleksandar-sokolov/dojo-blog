@@ -4,21 +4,24 @@ import BlogList from "./BlogList";
 const Home = () => {
 
 
-    const [blogs, setBlogs] = useState(
-        [
-            { title: 'sdfsdgfdg', body: 'dsafsdf,', author: 'Gogo', id: 1 },
-            { title: 'dfgdfgb', body: 'fgdfgdfgbbngfbf,', author: 'Todor', id: 2 }
-        ]
-    )
+    const [blogs, setBlogs] = useState(null); 
+    const [isPending, setIsPending] = useState(true)
 
-    const handleDelete = (id) => {
-        const newBlogs = blogs.filter(blog => blog.id !== id);
-        setBlogs(newBlogs)
-    }
+
+    useEffect(() => {
+        // npx json-server --watch data/db.json --port 8000
+        fetch('http://localhost:8000/blogs')
+        .then(res => res.json())
+        .then(data => {
+            setBlogs(data);
+            setIsPending(false)
+        })
+    }, [])
 
     return (
         <div className="home">
-            <BlogList blogs={blogs} title="All Blogs" handleDelete={handleDelete} />
+            {isPending && <p>Loading data ...</p>}
+            {blogs && <BlogList blogs={blogs} title="All Blogs" />}
         </div>
     );
 }
